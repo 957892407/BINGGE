@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:aop="http://www.springframework.org/schema/aop"
+    xmlns:context="http://www.springframework.org/schema/context"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context.xsd
+        http://www.springframework.org/schema/aop 
+        http://www.springframework.org/schema/aop/spring-aop.xsd">
+
+	<!-- Spring容器提供的自动扫描功能,Spring容器只会扫描使用：
+	@Controller，@Service，@Repository,@Component 
+	这四个注解标记的JAVA类，来作为需要被容器管理的组件 -->
+	<!-- base-package 代表着：从哪一个包扫描开始--> 
+    <context:component-scan base-package="org.spring_mybatis.study"/>
+	
+	<!-- 开启切面动态代理支持 -->
+	<aop:aspectj-autoproxy/>
+</beans>

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+
+	<settings>
+		<setting name="logImpl" value="LOG4J"/>
+		<setting name="lazyLoadingEnabled" value="true"/><!-- 开启延迟加载 -->
+		<setting name="aggressiveLazyLoading" value="false"/>
+	</settings>
+
+	<!-- 自动给类的全路径取类的别名，将类名来作为类的类别名 -->
+	<typeAliases>
+		<package name="org.spring_mybatis.study.usermag.beans"/>
+		<package name="org.spring_mybatis.study.logmag.beans"/>
+		<package name="org.spring_mybatis.study.relationshipmag.beans"/>
+		<!-- 支持多包扫描 
+		<package name="org.spring-mybatis.study.usermag.beans"/>-->
+	</typeAliases>
+	
+	<environments default="default">
+		<environment id="default">
+			<transactionManager type="JDBC"></transactionManager>
+			<dataSource type="POOLED">
+				<property name="driver" value="org.gjt.mm.mysql.Driver"/>
+				<!-- &amp; 在配置文件中代表&符号 -->
+				<property name="url" 
+				value="jdbc:mysql://localhost:3306/mybatis?useUnicode=true&amp;characterEncoding=UTF-8&amp;allowMultiQueries=true"/>
+				<property name="username" value="root"/>
+				<property name="password" value="lovo"/>
+			</dataSource>
+		</environment>
+	</environments>
+	
+	<mappers>
+		<package name="org.spring_mybatis.study.usermag.mapper"/>
+		<package name="org.spring_mybatis.study.logmag.mapper"/>
+		<package name="org.spring_mybatis.study.relationshipmag.mapper"/>
+	</mappers>
+</configuration>

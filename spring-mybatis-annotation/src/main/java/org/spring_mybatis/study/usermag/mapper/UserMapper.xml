@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- namespace 命名空间， -->
+<mapper namespace="org.spring_mybatis.study.usermag.mapper.UserMapper">
+	
+	<resultMap type="UserBean" id="userMap">
+		<id property="id" column="id" javaType="java.lang.Long"/>
+		<result property="userName" column="user_name" javaType="java.lang.String"/>
+		<result property="age" column="age" javaType="java.lang.Integer"/>
+		<result property="password" column="pwd" javaType="java.lang.String"/>
+		<result property="loginName" column="login_name" javaType="java.lang.String"/>
+	</resultMap>
+
+	<update id="updateUserInfo">
+		<!-- update t_user set user_name = #{user.userName},age = #{user.age},pwd = #{user.password} where 
+		id = #{user.id} -->
+		
+		<!-- set if通常适用于条件修改 -->
+		update t_user 
+		<set>
+			<if test="user.userName != null">
+				user_name = #{user.userName},
+			</if>
+			<if test="user.age != null">
+				age = #{user.age},
+			</if>
+			<if test="user.password != null">
+				pwd = #{user.password},
+			</if>
+		</set>
+		<where>
+			id = #{user.id}
+		</where>
+		
+	</update>
+	
+	<!-- resultMap,resultType二选其一，不可同时存在，resultType要列别名必须要和属性名一致 -->
+	<select id="getUserBeanByMap" resultType="UserBean">
+<!-- 		select id as id,user_name as userName,age as age,pwd as password,login_name as loginName from t_user where login_name = #{map.loginName} and pwd = #{map.password}
+ -->	
+	select id as id,user_name as userName,age as age,pwd as password,login_name as loginName from t_user
+	<where>
+		<!-- choose when只要有任何1个满足条件，其他条件则不需要判断，直接忽略 
+		所有的条件都不满足，则采用otherwise-->
+		<choose>
+			<when test="map.loginName != null">
+				and login_name = #{map.loginName}
+			</when>
+			<when test="map.password != null">
+				and pwd = #{map.password}
+			</when>
+			<otherwise>
+				and 1=1 
+			</otherwise>
+		</choose>
+	</where>
+	
+	</select>
+	
+	<select id="countUserListByMapToPager" resultType="int">
+		select count(id) from t_user
+		<include refid="commonSql"></include>
+	</select>
+	
+	<select id="findUserListByMapToPager" resultMap="userMap">
+		select * from t_user 
+		<include refid="commonSql"></include>
+		order by id desc limit #{map.index},#{map.rows}
+	</select>
+	
+	<sql id="commonSql">
+		<!-- 作为了解的内容，一般我们更多的使用where if
+		prefix前缀，在逻辑判断之前需要添加的字符串
+		prefixOverrides 前缀覆盖，需要被空字符串替代的内容
+		suffix后缀，在逻辑判断结束之后需要添加的字符串
+		suffixOverrides后缀覆盖，需要被空字符串替代的内容，通常是trim if判断的最后一个单词
+		
+		<trim prefix="where" prefixOverrides="and|or" suffix="order by" suffixOverrides="and|or">
+			<if test="map.userName != null">
+				and user_name like CONCAT(#{map.userName},'%')
+			</if>
+			<if test="map.password != null">
+				and pwd = #{map.password}
+			</if>
+		</trim>
+	 -->
+	
+		<!-- 如果SQL语句中包含了<或者是>符号，那么SQL语句应该放入到XML配置文件的静态语句块中，
+			错误的写法：
+			<if test="map.age != null">
+				and age < #{map.age}
+			</if>
+			正确的写法：
+			<if test="map.age != null">
+				<![CDATA[
+					and age < #{map.age}
+				]]>
+			</if>
+			
+			-->
+			
+			<!-- <[CDATA[]]> 配置文件中静态语句块中的代码，在xml解析时，会
+			被认为是普通的字符串，而不是被认为是一个标签的开始或结束 -->
+	
+		<!-- where标签出现的地方，会自动拼接一个where字符串，并且
+		会将where之后的第一个and或or使用空字符串取代掉 -->
+		<where>
+			<if test="map.userName != null">
+				and user_name like CONCAT(#{map.userName},'%')
+			</if>
+			<if test="map.password != null">
+				and pwd = #{map.password}
+			</if>
+		</where>
+	</sql>
+
+</mapper>
